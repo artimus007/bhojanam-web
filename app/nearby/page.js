@@ -1,41 +1,32 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { apiNearby } from '../../lib/api';
-import Map from '../../components/Map';
+"use client";
+import { useState } from "react";
+import { apiNearby } from "@/lib/api";
+import FoodCard from "@/components/FoodCard";
 
-export default function Nearby(){
-  const [center, setCenter] = useState([17.385,78.486]);
-  const [posts, setPosts] = useState([]);
+export default function NearbyPage() {
+  const [foods, setFoods] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(()=>{
-    if(navigator.geolocation){
-      navigator.geolocation.getCurrentPosition((p)=>{
-        const c = [p.coords.latitude, p.coords.longitude];
-        setCenter(c); load(c);
-      }, ()=> load(center));
-    } else { load(center); }
-    // eslint-disable-next-line
-  },[]);
-
-  async function load(c){
-    const r = await apiNearby(c[0], c[1], 15);
-    setPosts(r || []);
+  async function loadNearby() {
+    if (!navigator.geolocation) return alert("Geolocation not supported");
+    setLoading(true);
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const res = await apiNearby(pos.coords.latitude, pos.coords.longitude, 10);
+      setFoods(res);
+      setLoading(false);
+    });
   }
 
-  const markers = posts.map(p=> ({ _id:p._id, title:p.title, servings:p.servings, lat:p.location.coordinates[1], lng:p.location.coordinates[0] }));
-
   return (
-    <div className="grid gap-6">
-      <Map center={center} markers={markers} />
-      <div className="grid md:grid-cols-2 gap-4">
-        {posts.map(p=> (
-          <a key={p._id} href={`/post/${p._id}`} className="bg-white rounded-2xl shadow p-4 hover:shadow-md">
-            <div className="font-bold">{p.title}</div>
-            <div className="text-sm text-gray-600">Servings: {p.servings}</div>
-            <div className="text-xs text-gray-500">Status: {p.status}</div>
-          </a>
-        ))}
+    <div className="p-6 max-w-xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Nearby Food Posts</h1>
+      <button onClick={loadNearby} className="bg-blue-600 text-white px-4 py-2 rounded mb-4">
+        {loading ? "Loading..." : "Find Nearby"}
+      </button>
+      <div className="space-y-3">
+        {foods.map(f => <FoodCard key={f._id} food={f} />)}
       </div>
     </div>
   );
 }
+
