@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { apiNearby } from "@/lib/api";
-import FoodCard from "@/components/FoodCard";
+import { apiNearby } from "../lib/api";        // ✅ fixed path
+import FoodCard from "../components/FoodCard"; // ✅ fixed path
 import Link from "next/link";
 
 export default function HomePage() {
@@ -36,9 +36,12 @@ export default function HomePage() {
       <h2 className="text-2xl font-semibold mb-4">Latest Food Posts</h2>
       <div className="space-y-3">
         {foods.length === 0 && <p>No posts yet. Be the first to share!</p>}
-        {foods.map(f => <FoodCard key={f._id} food={f} />)}
+        {foods.map((f) => (
+          <FoodCard key={f._id} food={f} />
+        ))}
       </div>
     </div>
   );
 }
+
 
