@@ -1,0 +1,20 @@
+{
+  "name": "bhojanam-web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "14.2.4",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "tailwindcss": "3.4.7",
+    "postcss": "8.4.38",
+    "autoprefixer": "10.4.20",
+    "react-leaflet": "^4.2.1",
+    "leaflet": "^1.9.4"
+  }
+}
