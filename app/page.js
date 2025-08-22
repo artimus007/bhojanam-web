@@ -1,21 +1,44 @@
-export default function Page() {
+"use client";
+import { useEffect, useState } from "react";
+import { apiNearby } from "@/lib/api";
+import FoodCard from "@/components/FoodCard";
+import Link from "next/link";
+
+export default function HomePage() {
+  const [foods, setFoods] = useState([]);
+
+  useEffect(() => {
+    async function load() {
+      // fallback: Bangalore center
+      const res = await apiNearby(12.9716, 77.5946, 20);
+      setFoods(res);
+    }
+    load();
+  }, []);
+
   return (
-    <section className="grid gap-6 md:grid-cols-2 items-center">
-      <div className="space-y-4">
-        <h1 className="text-4xl font-black leading-tight">Stop wasting. Start sharing.</h1>
-        <p className="text-gray-600">Event ended with extra food? Publish it so nearby NGOs & volunteers can pick it up quickly.</p>
-        <div className="flex gap-3">
-          <a href="/create" className="px-4 py-3 rounded-2xl bg-emerald-600 text-white shadow">Create Surplus</a>
-          <a href="/nearby" className="px-4 py-3 rounded-2xl bg-white shadow">Find Nearby</a>
-        </div>
+    <div className="p-6 max-w-4xl mx-auto">
+      <h1 className="text-4xl font-bold text-center mb-6">🍲 Bhojanam</h1>
+      <p className="text-center text-gray-600 mb-8">
+        A platform to share surplus food and fight hunger.  
+        Post nearby food, claim as a volunteer, and reduce waste. 🌍
+      </p>
+
+      <div className="flex justify-center space-x-4 mb-8">
+        <Link href="/create" className="bg-green-600 text-white px-4 py-2 rounded">
+          + Create Post
+        </Link>
+        <Link href="/nearby" className="bg-blue-600 text-white px-4 py-2 rounded">
+          Find Nearby
+        </Link>
       </div>
-      <div className="bg-white rounded-2xl shadow p-6">
-        <ol className="list-decimal pl-5 space-y-2 text-sm text-gray-700">
-          <li>Tap <b>Create Surplus</b> and fill quick details.</li>
-          <li>We use your location to show volunteers near you.</li>
-          <li>They claim and pick up before food goes to waste.</li>
-        </ol>
+
+      <h2 className="text-2xl font-semibold mb-4">Latest Food Posts</h2>
+      <div className="space-y-3">
+        {foods.length === 0 && <p>No posts yet. Be the first to share!</p>}
+        {foods.map(f => <FoodCard key={f._id} food={f} />)}
       </div>
-    </section>
+    </div>
   );
 }
+
